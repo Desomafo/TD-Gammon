@@ -149,22 +149,27 @@ if __name__ == '__main__':
 
     global example_name
 
-    if 'l' in sys.argv[0]:
+    print(sys.argv)
+
+    if 'l' in sys.argv[1]:
+        print("Entered l flag")
         weights_load_key = True
         net.load()
 
-    if 's' in sys.argv[0]:
+    if 's' in sys.argv[1]:
+        print("Entered s flag")
         learn_key = False
 
-    if 'e' in sys.argv[0]:
+    if 'e' in sys.argv[1]:
+        print("Entered e flag")
         count += 1
         if (len(argv) > 1):
-            example_name = sys.argv[1]
+            example_name = sys.argv[2]
         else:
             example_name = 'example.xlxs'
         play_game(true)
     else:
-        while count < 1:
+        while count < 5:
             count += 1
             print("Game #:{}".format(count))
             play_game()

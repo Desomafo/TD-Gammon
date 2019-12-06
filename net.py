@@ -55,13 +55,13 @@ class Net(object):
         # (feedforward alters the actual self network)
 
         # Replicate and copy the layers
-        out = [np.random.randn() for x in range(self.num_output_units)]
+        out = self.output_layer
         # Hidden layer copy
-        h_l = [np.random.randn() for x in range(self.num_hidden_units)]
+        h_l = self.hidden_layer
         # Input weight layer copy
-        i_w = [[np.random.randn() for x in range(self.num_hidden_units)] for y in range(self.num_inputs)]
+        i_w = self.input_weights
         # Hidden weight layer copy
-        h_w = [[np.random.randn() for x in range(self.num_output_units)] for y in range(self.num_hidden_units)]
+        h_w = self.hidden_weights
 
         # Find the dot product of the input features and the hidden weights
         # Run through the activation function
@@ -114,6 +114,7 @@ class Net(object):
 
     # Helpers to save so I don't have to spend hours training again.
     def save(self):
+        print("Saving network setup")
         time_now = datetime.now()
         with open('data/given_hidden_weights_file{:%d, %b %Y, %H:%M}.txt'.format(time_now), 'w') as wf:
             for i in self.hidden_weights:
@@ -129,7 +130,7 @@ class Net(object):
                     bf.write("{}\t".format(j))
                 bf.write("\n")
         with open('data/given_input_weights_file_pickled', 'wb') as pbf:
-            pickle.dump(self.hidden_weights, pbf)
+            pickle.dump(self.input_weights, pbf)
             
         with open('data/given_hidden_eligibility__file', 'wb') as wf:
             pickle.dump(self.hidden_eligibility_trace, wf)
@@ -137,11 +138,12 @@ class Net(object):
             pickle.dump(self.input_eligibility_trace, bf)
 
     def load(self):
-    	with open('given_hidden_weights_file_pickled', 'rb') as wf:
+        print("Loading network setup")
+        with open('given_hidden_weights_file_pickled', 'rb') as wf:
             self.hidden_weights = pickle.load(wf)
-    	with open('given_input_weights_file_pickled', 'rb') as bf:
+        with open('given_input_weights_file_pickled', 'rb') as bf:
             self.input_weights = pickle.load(bf)
-    	with open('given_hidden_eligibility__file', 'rb') as wf:
+        with open('given_hidden_eligibility__file', 'rb') as wf:
             self.hidden_eligibility_trace = pickle.load(wf)
-    	with open('given_input_eligibility_trace', 'rb') as bf:
+        with open('given_input_eligibility_trace', 'rb') as bf:
             self.input_eligibility_trace = pickle.load(bf)
