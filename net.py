@@ -28,8 +28,6 @@ class Net(object):
         # Use the Lambda size that Tesauro used
         self.l = .7
 
-        self.wb_repr = Workbook()
-
         # Set up the network weights
         self.features = [[np.random.randn() for x in range(self.num_inputs)] for y in range(self.cycles)]
         self.hidden_layer = [np.random.randn() for x in range(self.num_hidden_units)]
@@ -62,6 +60,9 @@ class Net(object):
         i_w = self.input_weights
         # Hidden weight layer copy
         h_w = self.hidden_weights
+        
+        # Saving all calculations for checking what is happening
+        multiplications_results = {'hidden_layer': [], 'output_layer': []}
 
         # Find the dot product of the input features and the hidden weights
         # Run through the activation function
@@ -69,13 +70,16 @@ class Net(object):
             for i in range(0, 198):
                 h_l[j] += (features[i] * self.input_weights[i][j])
                 h_l[j] = self.sigmoid(h_l[j])
+            multiplications_results['hidden_layer'].append(h_l[j])
 
         # Find the dot product of the hidden layer weights and the output units
         # Run through the activation function
         for k in range(0, 2):
             out[k] = h_l[j] * self.hidden_weights[j][k]
             out[k] = self.sigmoid(out[k])
-        return out
+            multiplications_results['output_layer'].append(out[k])
+
+        return [out, multiplications_results]
 
     def feedforward(self, features):
         for j in range(0, 40):
