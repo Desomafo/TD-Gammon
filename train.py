@@ -128,12 +128,12 @@ def play_game(worksheet, by_example=False):
             # Optimazation to save getValue(current_state)
             repr_of_current_state = net.getValue(current_state)
             hidden_layer_results = repr_of_current_state[1]['hidden_layer']
-            for i in range(len(hidden_layer_results)):
-                ws.cell(row=i+1, column=202).value = hidden_layer_results[i]
+            for j in range(len(hidden_layer_results)):
+                ws.cell(row=i+1, column=202+j).value = hidden_layer_results[j]
 
             output_layer_results = repr_of_current_state[1]['output_layer']
-            for i in range(len(output_layer_results)):
-                ws.cell(row=i+1, column=204).value = output_layer_results[i]
+            for j in range(len(output_layer_results)):
+                ws.cell(row=i+1, column=203+len(hidden_layer_results)+j).value = output_layer_results[j]
             
             value_of_current_state = repr_of_current_state[0]
             error = net.getValue(predicted_state)[0][0] - value_of_current_state[0]
@@ -159,7 +159,6 @@ if __name__ == '__main__':
 
     print(sys.argv)
     time_now = datetime.now()
-    wb = Workbook()
 
     if 'l' in sys.argv[1]:
         print("Entered l flag")
@@ -178,17 +177,34 @@ if __name__ == '__main__':
         else:
             example_name = 'example.xlxs'
 
+        wb = Workbook()
         ws = wb.active
         ws.title = '1'
         play_game(ws, true)
-        wb.save("data/inputs: {:%d, %b %Y, %H:%M}.xlsx".format(time_now))
         net.save()
     else:
-        while count < 2:
+        while count < 3:
+            time_now = datetime.now()
+
             count += 1
             print("Game #:{}".format(count))
-            ws = wb.create_sheet(str(count))
+
+            wb = Workbook()
+            ws = wb.active
+            ws.title = 'Weights'
+
+            for i, row in enumerate(net.input_weights):
+                for j, cell in enumerate(row):
+                   ws.cell(row=i+1, column=j+1).value = cell 
+
+            for i, row in enumerate(net.hidden_weights):
+                for j, cell in enumerate(row):
+                   ws.cell(row=i+2+len(net.input_weights), column=j+1).value = cell 
+
+            ws = wb.create_sheet('Net output')
             play_game(ws)
-            wb.save("data/inputs: {:%d, %b %Y, %H:%M}.xlsx".format(time_now))
+            wb.save("data/inputs{} : {:%d, %b %Y, %H:%M}.xlsx".format(count,time_now))
             net.save()
+
             
+    

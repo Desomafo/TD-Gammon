@@ -53,13 +53,13 @@ class Net(object):
         # (feedforward alters the actual self network)
 
         # Replicate and copy the layers
-        out = self.output_layer
+        out = [np.random.randn() for x in range(self.num_output_units)]
         # Hidden layer copy
-        h_l = self.hidden_layer
+        h_l = [np.random.randn() for x in range(self.num_hidden_units)]
         # Input weight layer copy
-        i_w = self.input_weights
+        i_w = [[np.random.randn() for x in range(self.num_hidden_units)] for y in range(self.num_inputs)]
         # Hidden weight layer copy
-        h_w = self.hidden_weights
+        h_w = [[np.random.randn() for x in range(self.num_output_units)] for y in range(self.num_hidden_units)]
         
         # Saving all calculations for checking what is happening
         multiplications_results = {'hidden_layer': [], 'output_layer': []}
