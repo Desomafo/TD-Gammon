@@ -145,6 +145,62 @@ def play_game(worksheet, by_example=False):
     print("Win percentage: {}".format(wins/count))
 
 
+def eval_turn(ws):
+
+    g = Game.Game()
+
+    xlsx_game = parse_game(example_name)
+    g.set_game_state(xlsx_game)
+
+    actions = g.find_moves(xlsx_game[5], xlsx_game[4])
+
+    full_values = []
+    values = []
+    init_repr = g.get_representation(g.board, g.players, g.on_bar, g.off_board, g.turn)
+
+
+    for action in actions:
+        g.take_action(g.turn, action)
+        representation = g.get_representation(g.board, g.players, g.on_bar, g.off_board, g.turn)
+        turn_eval = net.getValue(representation)
+        full_values.append(turn_eval)
+        values.append(turn_eval[0])
+        # Undo the action and try the rest
+        g.undo_action(g.turn, action)
+
+    # We want white to win so find the max for white and the smallest for black
+    max = 0
+    max_index = 0
+    min = 1
+    min_index = 0
+    for i in range(0, len(values)):
+        if g.turn == 'white':
+            if max < values[i][0]:
+                max = values[i][0]
+                max_index = i
+        elif g.turn == 'black':
+            if min > values[i][1]:
+                min = values[i][1]
+                min_index = i
+    if g.turn == 'white':
+        best_action = actions[max_index]
+        best_eval = full_values[max_index][1]
+    else:
+        best_action = actions[min_index]
+        best_eval = full_values[min_index][1]
+
+
+    for j in range(len(init_repr)):
+        ws.cell(row=1, column=j+1).value = init_repr[j]
+
+    hidden_layer_results = best_eval['hidden_layer']
+    for j in range(len(hidden_layer_results)):
+        ws.cell(row=1, column=200+j).value = hidden_layer_results[j]
+
+    output_layer_results = best_eval['output_layer']
+    for j in range(len(output_layer_results)):
+        ws.cell(row=1, column=201+len(hidden_layer_results)+j).value = output_layer_results[j]
+
 if __name__ == '__main__':
     global net
     net = net.Net()
@@ -172,15 +228,31 @@ if __name__ == '__main__':
     if 'e' in sys.argv[1]:
         print("Entered e flag")
         count += 1
-        if (len(argv) > 1):
+        if (len(sys.argv) > 2):
             example_name = sys.argv[2]
         else:
-            example_name = 'example.xlxs'
+            example_name = 'example.xlsx'
 
         wb = Workbook()
         ws = wb.active
-        ws.title = '1'
-        play_game(ws, true)
+        ws.title = 'Weights'
+
+        for i, row in enumerate(net.input_weights):
+            for j, cell in enumerate(row):
+               ws.cell(row=i+1, column=j+1).value = cell 
+
+        for i, row in enumerate(net.hidden_weights):
+            for j, cell in enumerate(row):
+               ws.cell(row=i+2+len(net.input_weights), column=j+1).value = cell 
+
+        ws = wb.create_sheet('Net output')
+
+        if 'o' in sys.argv[1]:
+            print("Entered o flag")
+            eval_turn(ws)
+        else:
+            play_game(ws, true)
+        wb.save("data/inputs : {:%d, %b %Y, %H:%M}.xlsx".format(time_now))
         net.save()
     else:
         while count < 3:

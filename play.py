@@ -1,4 +1,5 @@
 from openpyxl import Workbook, load_workbook
+from ast import literal_eval
 
 def parse_game(excel_name):
     game_wb = load_workbook(excel_name)
@@ -87,12 +88,15 @@ def parse_game(excel_name):
         'black': black_count
     }
 
-    turn = 'white'
+
+    turn = 'white' if int(game_ws['H23'].value) == 1 else 'black' 
+    roll = literal_eval(game_ws['I23'].value)
 
     game_state.append(board)
     game_state.append(on_bar)
     game_state.append(off_board)
     game_state.append(pieces_left)
     game_state.append(turn)
+    game_state.append(roll)
 
     return game_state
