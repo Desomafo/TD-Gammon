@@ -203,14 +203,7 @@ def eval_turn(ws):
 
 
 class Interface:
-    """
-    Class for using neural network for one gaming session.
-    Session can be with learning and without it.
-    Use cases:
-        - Play one game form given turn
-        - Evaluate one turn
-        - Play and reinforce network on any number of games
-    """
+
     
 
     def __init__(self, keys):
@@ -221,39 +214,18 @@ class Interface:
             'from_state': {'short_name': 'f', 'value': False, 'file_of_game_state': 'example.xlsx'},
             'only_one_turn': {'short_name': 'o', 'value': False},
         }
-
-        
-        play()
         
 
     def set_players(self, player, opposite_player):
-        """
-        Function to set players.
-        As a player can be:
-            - neural network
-            - human
-        If second player is not passed player will play with himself/itself.
-        """
         pass
 
     def play(self):
-        """
-        Play game with installed config.
-        If configuration was not given new neural network will be created
-        and will learn play with itself on 1000 games. 
-        """
         pass
 
     def read_config(self):
-        """
-        Get list of keys and change values of flags in config.
-        """
         pass
 
-    def config_repr(self):
-        """
-        Return config as string.
-        """
+    def print_config(self):
         pass
 
 
