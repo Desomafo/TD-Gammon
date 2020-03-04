@@ -223,7 +223,16 @@ class Interface:
         }
 
         
-        play()
+        while True:
+
+            display_menu()
+            input_key = input()
+            if input_key = 'e':
+                break
+            elif input_key = 'c':
+                change_config()
+            elif input_key = 'p':
+                play()
         
 
     def set_players(self, player, opposite_player):
@@ -256,6 +265,11 @@ class Interface:
         """
         pass
 
+    def display_menu(self):
+        """
+        Print current state of config and available actions.
+        """
+        pass
 
 
 
