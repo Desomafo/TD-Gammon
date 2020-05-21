@@ -101,16 +101,25 @@ class Interface:
 
     def compare_two_ANNs(self):
         """
-
+        Two given instances of ANN will play against each other for
+        entered amount of games. Result is win percentage for first
+        choosen network.
         """
         pass
 
 
     def start_game_from_example(self):
+        """
+        Start playing game from given board state. Than pass control
+        to third or seventh options.
+        """
         pass
 
     
     def play_with_ANN(self):
+        """
+        Start playing against choosen ANN. GIU option only.
+        """
         pass
 
 
