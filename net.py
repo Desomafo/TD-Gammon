@@ -79,7 +79,7 @@ class Net(object):
             out[k] = self.sigmoid(out[k])
             multiplications_results['output_layer'].append(out[k])
 
-        return [out, multiplications_results]
+        return out
 
     def feedforward(self, features):
         for j in range(0, 40):
@@ -116,6 +116,21 @@ class Net(object):
                 for i in range(0, 198):
                     self.input_weights[i][j] += self.learning_rate * error * self.input_eligibility_trace[i][j][k]
 
+
+    def learn(self, states):
+        for i in range(0, len(states) - 2):
+                # Feed in current state and the next state
+                # the eligibility is based on states t and t+1
+                current_state = states[i]
+                predicted_state = states[i+1]
+
+                error = (self.getValue(predicted_state)[0] 
+                         - self.getValue(current_state)[0])
+                self.feedforward(current_state)
+                self.do_td(current_state,
+                           self.getValue(current_state), error)
+
+
     # Helpers to save so I don't have to spend hours training again.
     def save_txt(self):
         print("Saving network setup")
@@ -142,7 +157,7 @@ class Net(object):
             pickle.dump(self.input_eligibility_trace, bf)
 
     def save(self, experience):
-        with open('data/{}_{:%d_%b_%Y__h%H_m%M}.pkl'.format(experience, time_now), 'wb') as pickled_instance:
+        with open('data/{}_{:%d_%b_%Y__h%H_m%M}.pkl'.format(experience, datetime.now()), 'wb') as pickled_instance:
             pickle.dump(self, pickled_instance)
 
     def load(self):
