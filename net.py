@@ -117,7 +117,7 @@ class Net(object):
                     self.input_weights[i][j] += self.learning_rate * error * self.input_eligibility_trace[i][j][k]
 
     # Helpers to save so I don't have to spend hours training again.
-    def save(self):
+    def save_txt(self):
         print("Saving network setup")
         time_now = datetime.now()
         with open('data/given_hidden_weights_file{:%d, %b %Y, %H:%M}.txt'.format(time_now), 'w') as wf:
@@ -140,6 +140,10 @@ class Net(object):
             pickle.dump(self.hidden_eligibility_trace, wf)
         with open('data/given_input_eligibility_trace', 'wb') as bf:
             pickle.dump(self.input_eligibility_trace, bf)
+
+    def save(self, experience):
+        with open('data/{}_{:%d_%b_%Y__h%H_m%M}.pkl'.format(experience, time_now), 'wb') as pickled_instance:
+            pickle.dump(self, pickled_instance)
 
     def load(self):
         print("Loading network setup")

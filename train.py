@@ -43,7 +43,11 @@ class Interface:
             if choosen_option == 'x':
                 break
             elif choosen_option == '1':
-                self.create_new_ANN_instance()
+                os.system('cls')
+                games_amount = input("Enter desired experience of ANN"
+                                     "(games amount): ")
+                games_amount = int(games_amount)
+                self.create_new_ANN_instance(games_amount)
             elif choosen_option == '2':
                 self.continue_machine_learning()
             elif choosen_option == '3':
@@ -86,7 +90,7 @@ class Interface:
         count = 0
         wins = 0
 
-        while count < 1000:
+        while count < games_amount:
             count += 1
             print("Game #:{}".format(count))
             g = Game.Game()
@@ -184,7 +188,7 @@ class Interface:
                     new_ANN.feedforward(current_state)
                     new_ANN.do_td(current_state, new_ANN.getValue(current_state), error)
             print("Win percentage: {}".format(wins/count))
-        # new_ANN.save()
+        new_ANN.save(count)
 
 
     def continue_machine_learning(self):
