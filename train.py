@@ -47,7 +47,10 @@ class Interface:
                 games_amount = input("Enter desired experience of ANN"
                                      "(games amount): ")
                 games_amount = int(games_amount)
-                self.create_new_ANN_instance(games_amount)
+                try:
+                    self.create_new_ANN_instance(games_amount)
+                except KeyboardInterrupt:
+
             elif choosen_option == '2':
                 self.continue_machine_learning()
             elif choosen_option == '3':
