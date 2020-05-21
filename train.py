@@ -58,15 +58,6 @@ class Interface:
                 self.play_with_ANN()
 
 
-    def play(self):
-        """
-        Play game with installed config.
-        If configuration was not given new neural network will be
-        created and will learn play with itself on 1000 games. 
-        """
-        pass
-
-
     def display_menu(self):
         """
         Print available actions.
@@ -83,6 +74,38 @@ class Interface:
 
         print("\nEnter option number to continue")
         print("Press X to exit")
+
+
+    def create_new_ANN_instance(self):
+        """
+        Create new instance of ANN and start machine learning
+        process of entered number of games.
+        """
+        pass
+
+
+    def continue_machine_learning(self):
+        """
+        Continue process of machine learning on choosen ANN with
+        additional entered number of games.
+        """
+        pass
+
+
+    def get_hint(self):
+        pass
+
+
+    def compare_two_ANNs(self):
+        pass
+
+
+    def start_game_from_example(self):
+        pass
+
+    
+    def play_with_ANN(self):
+        pass
 
 
 if __name__ == '__main__':
