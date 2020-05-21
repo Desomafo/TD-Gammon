@@ -93,10 +93,16 @@ class Interface:
 
 
     def get_hint(self):
+        """
+        Get hint for one turn for given board state.
+        """
         pass
 
 
     def compare_two_ANNs(self):
+        """
+
+        """
         pass
 
 
