@@ -20,17 +20,22 @@ class Interface:
         - Evaluate one turn
         - Play and reinforce network on any number of games
     """
-    
-
-    class Option:
-
-        def __init__(self, name, is_dependent):
-            self.name = name
-            self.network_availability_dependent = is_dependent
 
 
     def __init__(self, keys):
+        # Forming list of all options
+        self.options = [
+                "Make a new instance of ANN",
+                "Continue process of machine learning",
+                "Get hint for one turn",
+                "Watch ANN play",
+                "Compare two ANNs",
+                "Start game from example",
+                "Play game with ANN",
+                ]
         display_menu()
+
+        # Main control cycle of programm
         while True:
             choosen_option = input("Enter option number")
             if choosen_option == 1:
@@ -45,7 +50,7 @@ class Interface:
                 pass
             elif choosen_option == 7:
                 pass
-        
+
 
     def play(self):
         """
@@ -67,6 +72,4 @@ class Interface:
             for number, option in enumerate(options.keys()):
                 print(number, option)
         else:
-            
-
-    
+            print(1, options[0])
