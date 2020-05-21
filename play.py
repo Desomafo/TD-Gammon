@@ -110,4 +110,3 @@ def parse_weights(net_output_file_name):
     input_range = weights_ws['A1':'AN198']
     hidden_range = weights_ws['A200':'B239']
 
-    for 

@@ -22,7 +22,7 @@ class Interface:
     """
 
 
-    def __init__(self, keys):
+    def __init__(self):
         # Forming list of all options
         self.options = [
                 "Make a new instance of ANN",
@@ -33,23 +33,29 @@ class Interface:
                 "Start game from example",
                 "Play game with ANN",
                 ]
-        display_menu()
+        self.more_than_one_network_instance = False
+        self.display_menu()
 
         # Main control cycle of programm
         while True:
-            choosen_option = input("Enter option number")
-            if choosen_option == 1:
-                pass
-            elif choosen_option == 2:
-                pass
-            elif choosen_option == 4:
-                pass
-            elif choosen_option == 5:
-                pass
-            elif choosen_option == 6:
-                pass
-            elif choosen_option == 7:
-                pass
+            choosen_option = input("\nEnter option number: ")
+            print()
+            if choosen_option == 'x':
+                break
+            elif choosen_option == '1':
+                self.create_new_ANN_instance()
+            elif choosen_option == '2':
+                self.continue_machine_learning()
+            elif choosen_option == '3':
+                self.get_hint()
+            elif choosen_option == '4':
+                self.watch_ANNs_play()
+            elif choosen_option == '5':
+                self.compare_two_ANNs()
+            elif choosen_option == '6':
+                self.start_game_from_example()
+            elif choosen_option == '7':
+                self.play_with_ANN()
 
 
     def play(self):
@@ -68,8 +74,16 @@ class Interface:
         print("Backgammon game using TD-Gammon")
         print("Available options:")
 
-        if more_than_one_network_instance == True:
-            for number, option in enumerate(options.keys()):
-                print(number, option)
+        out_str = "\t{}. {}"
+        if self.more_than_one_network_instance == True:
+            for number, option in enumerate(self.options):
+                print(out_str.format(number, option))
         else:
-            print(1, options[0])
+            print(out_str.format(1, self.options[0]))
+
+        print("\nEnter option number to continue")
+        print("Press X to exit")
+
+
+if __name__ == '__main__':
+    Interface()
