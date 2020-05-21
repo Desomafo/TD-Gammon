@@ -124,7 +124,7 @@ class Interface:
                     for action in actions:
                         g.take_action(g.turn, action)
                         representation = g.get_representation(g.board, g.players, g.on_bar, g.off_board, g.turn)
-                        values.append(net.getValue(representation))
+                        values.append(new_ANN.getValue(representation))
                         # Undo the action and try the rest
                         g.undo_action(g.turn, action)
 
@@ -155,7 +155,7 @@ class Interface:
                     if g.turn == 'white':
                         # Save the state
                         states.append(expected_board)
-                        # print(net.getValue(expected_board))
+                        # print(new_ANN.getValue(expected_board))
                         # print('state size',len(states))
                     # Swap turns and increment move count
                     moves += 1
@@ -180,11 +180,11 @@ class Interface:
                     current_state = states[i]
                     predicted_state = states[i+1]
 
-                    error = net.getValue(predicted_state)[0] - net.getValue(current_state)[0]
-                    net.feedforward(current_state)
-                    net.do_td(current_state, net.getValue(current_state), error)
+                    error = new_ANN.getValue(predicted_state)[0] - new_ANN.getValue(current_state)[0]
+                    new_ANN.feedforward(current_state)
+                    new_ANN.do_td(current_state, new_ANN.getValue(current_state), error)
             print("Win percentage: {}".format(wins/count))
-        # net.save()
+        # new_ANN.save()
 
 
     def continue_machine_learning(self):
