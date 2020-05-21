@@ -10,6 +10,7 @@ from play import parse_game
 from datetime import datetime
 from openpyxl import Workbook
 
+
 class Interface:
     """
     Class for using neural network for one gaming session.
@@ -20,6 +21,13 @@ class Interface:
         - Play and reinforce network on any number of games
     """
     
+
+    class Option:
+
+        def __init__(self, name, is_dependent):
+            self.name = name
+            self.network_availability_dependent = is_dependent
+
 
     def __init__(self, keys):
         display_menu()
@@ -42,8 +50,8 @@ class Interface:
     def play(self):
         """
         Play game with installed config.
-        If configuration was not given new neural network will be created
-        and will learn play with itself on 1000 games. 
+        If configuration was not given new neural network will be
+        created and will learn play with itself on 1000 games. 
         """
         pass
 
@@ -56,9 +64,9 @@ class Interface:
         print("Available options:")
 
         if more_than_one_network_instance == True:
-            for number, option in enumerate(options):
+            for number, option in enumerate(options.keys()):
                 print(number, option)
         else:
-
+            
 
     
