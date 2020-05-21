@@ -151,3 +151,7 @@ class Net(object):
             self.hidden_eligibility_trace = pickle.load(wf)
         with open('given_input_eligibility_trace', 'rb') as bf:
             self.input_eligibility_trace = pickle.load(bf)
+
+    def load_weights(self, weights):
+        self.input_weights = weights[0]
+        self.hidden_weights = weights[1]

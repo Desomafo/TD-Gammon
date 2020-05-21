@@ -100,3 +100,14 @@ def parse_game(excel_name):
     game_state.append(roll)
 
     return game_state
+
+
+def parse_weights(net_output_file_name):
+
+    net_output_wb = load_workbook(net_output_file_name)
+    weights_ws = net_output_wb.active
+
+    input_range = weights_ws['A1':'AN198']
+    hidden_range = weights_ws['A200':'B239']
+
+    for 
