@@ -22,6 +22,21 @@ class Interface:
     
 
     def __init__(self, keys):
+        display_menu()
+        while True:
+            choosen_option = input("Enter option number")
+            if choosen_option == 1:
+                pass
+            elif choosen_option == 2:
+                pass
+            elif choosen_option == 4:
+                pass
+            elif choosen_option == 5:
+                pass
+            elif choosen_option == 6:
+                pass
+            elif choosen_option == 7:
+                pass
         
 
     def play(self):
