@@ -45,13 +45,20 @@ class Interface:
         If configuration was not given new neural network will be created
         and will learn play with itself on 1000 games. 
         """
-
+        pass
 
 
     def display_menu(self):
         """
-        Print current state of config and available actions.
+        Print available actions.
         """
-        pass
+        print("Backgammon game using TD-Gammon")
+        print("Available options:")
+
+        if more_than_one_network_instance == True:
+            for number, option in enumerate(options):
+                print(number, option)
+        else:
+
 
     
