@@ -119,10 +119,10 @@ class Interface:
                 actions = []
 
                 if start == 1:
-                        actions = g.find_moves(p1Roll, g.turn)
-                        start = 0
+                    actions = g.find_moves(p1Roll, g.turn)
+                    start = 0
                 else:
-                        actions = g.find_moves(g.roll_dice(), g.turn)
+                    actions = g.find_moves(g.roll_dice(), g.turn)
 
                 if len(actions) > 0:
                     values = []
@@ -180,16 +180,8 @@ class Interface:
                             g.print_point(i)
 
             # Build the eligibility trace with the list of states white has accumulated
-            for i in range(0, len(states) - 2):
+            new_ANN.learn(states)
 
-                    # Feed in current state and the next state
-                    # the eligibility is based on states t and t+1
-                    current_state = states[i]
-                    predicted_state = states[i+1]
-
-                    error = new_ANN.getValue(predicted_state)[0] - new_ANN.getValue(current_state)[0]
-                    new_ANN.feedforward(current_state)
-                    new_ANN.do_td(current_state, new_ANN.getValue(current_state), error)
             print("Win percentage: {}".format(wins/count))
         new_ANN.save(count)
 
