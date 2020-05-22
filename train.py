@@ -116,6 +116,12 @@ class Interface:
         ANN_instance.save(count)
 
 
+    def scan_ANN_instances(self):
+        """
+        Scan created instances in data folder.
+        """
+
+
     def get_hint(self):
         """
         Get hint for one turn for given board state.
