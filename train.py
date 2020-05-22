@@ -1,4 +1,5 @@
 import os
+import pickle
 
 from Game import Game
 from net import Net
@@ -33,7 +34,7 @@ class Interface:
                 "Play game with ANN",
                 ]
         self.ANN_instances = self.scan_ANN_instances()
-        if len(ANN_instances) > 1:
+        if len(self.ANN_instances) > 1:
             self.more_than_one_network_instance = True
         else:
             self.more_than_one_network_instance = False
@@ -46,6 +47,7 @@ class Interface:
             print()
             if choosen_option == 'x':
                 break
+
             elif choosen_option == '1':
                 os.system('cls')
                 games_amount = input("Enter desired experience of ANN"
@@ -55,18 +57,41 @@ class Interface:
 
             elif choosen_option == '2':
                 os.system('cls')
-                for instance in self.scan_ANN_instances():
-                    print()
+                print("Choose what ANN you want to continue to train:\n")
+                self.display_existing_ANN_instances()
+
+                instances = self.scan_ANN_instances()
+                choosen_instance_number = int(input("Enter instance number: "))
+                choosen_instance_name = instances[choosen_instance_number-1]
+                with open(choosen_instance_name, 'rb') as pi:
+                    ANN_instance = pickle.load(pi)
                 games_amount = input("Enter desired additional experience of ANN"
                                      "(games amount): ")
                 games_amount = int(games_amount)
-                self.continue_machine_learning()
+                self.continue_machine_learning(ANN_instance, games_amount)
+
             elif choosen_option == '3':
                 self.get_hint()
             elif choosen_option == '4':
                 self.watch_ANNs_play()
             elif choosen_option == '5':
-                self.compare_two_ANNs()
+                os.system('cls')
+                self.display_existing_ANN_instances() 
+
+                instances = self.scan_ANN_instances()
+                numbers_str = input("Enter two numbers of instances"
+                                    "to compare (* *): ")
+                numbers = numbers_str.split(' ')
+                first_instance_name = instances[int(numbers[0])]
+                second_instance_name = instances[int(numbers[1])]
+                
+                with open(first_instance_name, 'rb') as pi:
+                    first_instance = pickle.load(pi)
+                with open(second_instance_name, 'rb') as pi:
+                    second_instance = pickle.load(pi)
+
+                self.compare_two_ANNs(first_instance, second_instance)
+
             elif choosen_option == '6':
                 self.start_game_from_example()
             elif choosen_option == '7':
@@ -82,7 +107,7 @@ class Interface:
 
         out_str = "\t{}. {}"
         if self.more_than_one_network_instance == True:
-            for number, option in enumerate(self.options):
+            for number, option in enumerate(self.options, 1):
                 print(out_str.format(number, option))
         else:
             print(out_str.format(1, self.options[0]))
@@ -91,13 +116,23 @@ class Interface:
         print("Press X to exit")
 
 
+    def display_existing_ANN_instances(self):
+        for n, instance_file_name in enumerate(self.scan_ANN_instances(), 1):
+            print(f"{n}.\t{instance_props[0]} - experience")
+            print(f"\t{instance_props[5][1:]}:{instance_props[6][1:]} - "
+                  f"{instance_props[1]}/{instance_props[2]}/{instance_props[3]}"
+                  " - creation date")
+            print("--------------------------------------------")
+
+
     def create_new_ANN_instance(self, games_amount):
         """
         Create new instance of ANN and start machine learning
         process of entered number of games.
         """
         new_ANN = Net()
-        continue_machine_learning(new_ANN, games_amount)
+        self.continue_machine_learning(new_ANN, games_amount)
+
 
     def continue_machine_learning(self, ANN_instance, games_amount):
         """
@@ -113,7 +148,7 @@ class Interface:
                 count += 1
                 print("Game #:{}".format(count))
                 g = Game()
-                winner, states = g.play(new_ANN)
+                winner, states = g.play(ANN_instance)
                 if winner == 'white':
                     wins += 1
                 # Build the eligibility trace with the list of states white has accumulated
@@ -121,7 +156,7 @@ class Interface:
         except KeyboardInterrupt:
             pass
         print("Win percentage: {}".format(wins/count))
-        ANN_instance.save(count)
+        ANN_instance.save()
 
 
     def scan_ANN_instances(self):
@@ -138,13 +173,23 @@ class Interface:
         pass
 
 
-    def compare_two_ANNs(self):
+    def compare_two_ANNs(self, first_ANN_instance, second_ANN_instance):
         """
         Two given instances of ANN will play against each other for
         entered amount of games. Result is win percentage for first
         choosen network.
         """
-        pass
+
+        count = 0
+        wins = 0
+        while count < 100:
+            count += 1
+            print("Game #:{}".format(count))
+            g = Game()
+            winner, states = g.play(ANN_instance)
+            if winner == 'white':
+                wins += 1
+        print("Win percentage: {}".format(wins/count))
 
 
     def start_game_from_example(self):

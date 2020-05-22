@@ -28,6 +28,16 @@ class Net(object):
         # Use the Lambda size that Tesauro used
         self.l = .7
 
+        ########################################
+        # Start info block
+        #
+        self.games_amount_experience = 0
+        self.init_date = datetime.now()
+        self.last_modified_date = datetime.now()
+        #
+        # End info block
+        ########################################
+
         # Set up the network weights
         self.features = [[np.random.randn() for x in range(self.num_inputs)] for y in range(self.cycles)]
         self.hidden_layer = [np.random.randn() for x in range(self.num_hidden_units)]
@@ -118,6 +128,7 @@ class Net(object):
 
 
     def learn(self, states):
+        self.games_amount_experience += 1
         for i in range(0, len(states) - 2):
                 # Feed in current state and the next state
                 # the eligibility is based on states t and t+1
@@ -128,7 +139,8 @@ class Net(object):
                          - self.getValue(current_state)[0])
                 self.feedforward(current_state)
                 self.do_td(current_state,
-                           self.getValue(current_state), error)
+                           self.getValue(current_state),
+                           error)
 
 
     # Helpers to save so I don't have to spend hours training again.
@@ -156,8 +168,9 @@ class Net(object):
         with open('data/given_input_eligibility_trace', 'wb') as bf:
             pickle.dump(self.input_eligibility_trace, bf)
 
-    def save(self, experience):
-        with open('data/{}_{:%d_%b_%Y__h%H_m%M}.pkl'.format(experience, datetime.now()), 'wb') as pickled_instance:
+    def save(self):
+        self.last_modified_date = datetime.now()
+        with open('data/{}_{:%d_%b_%Y__h%H_m%M}.pkl'.format(self.games_amount_experience, self.init_date), 'wb') as pickled_instance:
             pickle.dump(self, pickled_instance)
 
     def load(self):
