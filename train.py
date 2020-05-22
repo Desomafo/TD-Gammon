@@ -32,10 +32,10 @@ class Interface:
                 "Play game with ANN",
                 ]
         self.more_than_one_network_instance = False
-        self.display_menu()
 
         # Main control cycle of programm
         while True:
+            self.display_menu()
             choosen_option = input("\nEnter option number: ")
             print()
             if choosen_option == 'x':
@@ -48,6 +48,10 @@ class Interface:
                 self.create_new_ANN_instance(games_amount)
 
             elif choosen_option == '2':
+                os.system('cls')
+                games_amount = input("Enter desired additional experience of ANN"
+                                     "(games amount): ")
+                games_amount = int(games_amount)
                 self.continue_machine_learning()
             elif choosen_option == '3':
                 self.get_hint()
@@ -85,6 +89,13 @@ class Interface:
         process of entered number of games.
         """
         new_ANN = Net()
+        continue_machine_learning(new_ANN, games_amount)
+
+    def continue_machine_learning(self, ANN_instance, games_amount):
+        """
+        Continue process of machine learning on choosen ANN with
+        additional entered number of games.
+        """
 
         count = 0
         wins = 0
@@ -94,22 +105,15 @@ class Interface:
                 count += 1
                 print("Game #:{}".format(count))
                 g = Game()
-                g.play(new_ANN)
+                winner, states = g.play(new_ANN)
+                if winner == 'white':
+                    wins += 1
                 # Build the eligibility trace with the list of states white has accumulated
-                new_ANN.learn(states)
+                ANN_instance.learn(states)
         except KeyboardInterrupt:
             pass
-        finally:
-            print("Win percentage: {}".format(wins/count))
-            new_ANN.save(count)
-
-
-    def continue_machine_learning(self):
-        """
-        Continue process of machine learning on choosen ANN with
-        additional entered number of games.
-        """
-        pass
+        print("Win percentage: {}".format(wins/count))
+        ANN_instance.save(count)
 
 
     def get_hint(self):
