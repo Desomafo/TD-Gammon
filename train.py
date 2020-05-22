@@ -5,6 +5,7 @@ from net import Net
 
 from play import parse_game
 
+from glob import glob
 from datetime import datetime
 from openpyxl import Workbook
 
@@ -31,7 +32,12 @@ class Interface:
                 "Start game from example",
                 "Play game with ANN",
                 ]
-        self.more_than_one_network_instance = False
+        self.ANN_instances = self.scan_ANN_instances()
+        if len(ANN_instances) > 1:
+            self.more_than_one_network_instance = True
+        else:
+            self.more_than_one_network_instance = False
+
 
         # Main control cycle of programm
         while True:
@@ -49,6 +55,8 @@ class Interface:
 
             elif choosen_option == '2':
                 os.system('cls')
+                for instance in self.scan_ANN_instances():
+                    print()
                 games_amount = input("Enter desired additional experience of ANN"
                                      "(games amount): ")
                 games_amount = int(games_amount)
@@ -120,6 +128,7 @@ class Interface:
         """
         Scan created instances in data folder.
         """
+        return [f for f in glob("data\*.pkl")]
 
 
     def get_hint(self):
