@@ -163,8 +163,8 @@ class Interface:
             while count < games_amount:
                 count += 1
                 print("Game #:{}".format(count))
-                g = Game()
-                winner, states = g.play(ANN_instance)
+                g = Game(ANN_instance, None, True)
+                winner, states = g.play()
                 if winner == 'white':
                     wins += 1
                 # Build the eligibility trace with the list of states white has accumulated
@@ -186,9 +186,9 @@ class Interface:
         """
         Get hint for one turn for given board state.
         """
-        g = Game()
+        g = Game(ANN_instance)
         g.parse_game('example.xlsx')
-        win_percentage = ANN_instance.getValue(g.get_representation())
+        best_action = g.find_best_action(g.find_moves(g.turn, ))
 
 
 
@@ -204,8 +204,8 @@ class Interface:
         while count < 100:
             count += 1
             print("Game #:{}".format(count))
-            g = Game()
-            winner, states = g.play(first_ANN_instance, second_ANN_instance)
+            g = Game(first_ANN_instance, second_ANN_instance)
+            winner, states = g.play()
             if winner == 'white':
                 wins += 1
         print("Win percentage: {}".format(wins/count))

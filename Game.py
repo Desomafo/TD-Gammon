@@ -6,10 +6,14 @@ import random
 
 class Game:
 
-    def __init__(self, first_opponent, second_opponent):
+    def __init__(self, first_opponent, second_opponent=None, is_learn=False):
         self.players = ['white', 'black']
         self.first_opponent = first_opponent
-        self.second_opponent = second_opponent
+        if second_opponent == None:
+            self.second_opponent = self.first_opponent
+        else:
+            self.second_opponent = second_opponent
+        self.is_learn = is_learn
         self.board = [[] for _ in range(24)]
         self.on_bar = {}
         self.off_board = {}
@@ -357,34 +361,36 @@ class Game:
         with Pool() as pool:
             try:
                 if self.turn == 'white':
-                    values = pool.map(first_opponent.getValue, repr_list)
+                    values = pool.map(self.first_opponent.getValue, repr_list)
                 elif self.turn == 'black':
-                    values = pool.map(second_opponent.getValue, repr_list)
+                    values = pool.map(self.second_opponent.getValue, repr_list)
             except KeyboardInterrupt:
                 pool.terminate()
                 print("Game is terminated")
                 return
 
         # We want white to win so find the max for white and the smallest for black
-        max = 0
         max_index = 0
-        min = 1
+        min_val = 1
         min_index = 0
-        for val in values:
+        max_val = 0
+        for i, white_val, black_val in enumerate(values):
             if self.turn == 'white':
-
-        for i in range(0, len(values)):
-            if self.turn == 'white':
-                if max < values[i][0]:
-                    max = values[i][0]
+                if max_val < white_val:
+                    max_val = white_val
                     max_index = i
             elif self.turn == 'black':
-                if min > values[i][1]:
-                    min = values[i][1]
-                    min_index = i
-        if self.turn == 'white':
-            best_action = actions[max_index]
-        else:
+                if max_val < black_val:
+                    max_val = black_val
+                    max_index = i
+        best_action = actions[max_index]
+
+        if is_learn == True:
+            for i in range(0, len(values)):
+                if self.turn == 'black':
+                    if min_val > values[i][1]:
+                        min_val = values[i][1]
+                        min_index = i
             best_action = actions[min_index]
 
         return best_action
@@ -393,8 +399,6 @@ class Game:
 
     def play(self):
         
-        if self.second_opponent == None:
-            self.second_opponent = self.first_opponent
         # print("White player rolled {}, Black player rolled {}".format(p1Roll[0] + p1Roll[1], p2Roll[0] + p2Roll[1]))
         p1Roll = (0,0)
         p2Roll = (0,0)
@@ -422,50 +426,8 @@ class Game:
                 actions = self.find_moves(self.roll_dice(), self.turn)
 
             if len(actions) > 0:
-                values = []
-                repr_list = []
 
-                # Find the action with the most appealing value
-                for action in actions:
-                    self.take_action(self.turn, action)
-                    representation = self.get_representation(
-                            self.board, self.players, self.on_bar,
-                            self.off_board, self.turn
-                            )
-                    repr_list.append(representation)
-                    # Undo the action and try the rest
-                    self.undo_action(self.turn, action)
-
-                with Pool() as pool:
-                    try:
-                        if self.turn == 'white':
-                            values = pool.map(first_opponent.getValue, repr_list)
-                        elif self.turn == 'black':
-                            values = pool.map(second_opponent.getValue, repr_list)
-                    except KeyboardInterrupt:
-                        pool.terminate()
-                        print("Game is terminated")
-                        return
-
-                # We want white to win so find the max for white and the smallest for black
-                max = 0
-                max_index = 0
-                min = 1
-                min_index = 0
-                for i in range(0, len(values)):
-                    if self.turn == 'white':
-                        if max < values[i][0]:
-                            max = values[i][0]
-                            max_index = i
-                    elif self.turn == 'black':
-                        if min > values[i][1]:
-                            min = values[i][1]
-                            min_index = i
-                if self.turn == 'white':
-                    best_action = actions[max_index]
-                else:
-                    best_action = actions[min_index]
-
+                best_action = self.find_best_action(actions)
                 # Take the best action
                 self.take_action(self.turn, best_action)
 
