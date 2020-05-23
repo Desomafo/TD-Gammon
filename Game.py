@@ -14,6 +14,7 @@ class Game:
         else:
             self.second_opponent = second_opponent
         self.is_learn = is_learn
+        self.roll = ()
         self.board = [[] for _ in range(24)]
         self.on_bar = {}
         self.off_board = {}
@@ -374,7 +375,7 @@ class Game:
         min_val = 1
         min_index = 0
         max_val = 0
-        for i, white_val, black_val in enumerate(values):
+        for i, (white_val, black_val) in enumerate(values):
             if self.turn == 'white':
                 if max_val < white_val:
                     max_val = white_val
@@ -385,7 +386,7 @@ class Game:
                     max_index = i
         best_action = actions[max_index]
 
-        if is_learn == True:
+        if self.is_learn == True:
             for i in range(0, len(values)):
                 if self.turn == 'black':
                     if min_val > values[i][1]:
@@ -544,7 +545,8 @@ class Game:
 
 
         turn = 'white' if int(game_ws['H23'].value) == 1 else 'black' 
-        roll = literal_eval(game_ws['I23'].value)
+        self.roll = literal_eval(game_ws['I23'].value)
+        
 
         self.board = board
         self.on_bar = on_bar

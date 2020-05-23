@@ -83,7 +83,7 @@ class Interface:
                     with open(choosen_instance_name, 'rb') as pi:
                         ANN_instance = pickle.load(pi)
 
-                    self.get_hint(ANN_instance)
+                    print("Next move - {}".format(self.get_hint(ANN_instance)))
                     
             elif choosen_option == '4':
                 self.watch_ANNs_play()
@@ -188,11 +188,12 @@ class Interface:
         """
         g = Game(ANN_instance)
         g.parse_game('example.xlsx')
-        best_action = g.find_best_action(g.find_moves(g.turn, ))
+        best_action = g.find_best_action(g.find_moves(g.turn, g.roll()))
+        return best_action
 
 
 
-    def compare_two_ANNs(self, first_ANN_instance, second_ANN_instance):
+    def compare_ANNs_with_most_experienced(self):
         """
         Two given instances of ANN will play against each other for
         entered amount of games. Result is win percentage for first
@@ -201,14 +202,18 @@ class Interface:
 
         count = 0
         wins = 0
-        while count < 100:
-            count += 1
-            print("Game #:{}".format(count))
-            g = Game(first_ANN_instance, second_ANN_instance)
-            winner, states = g.play()
-            if winner == 'white':
-                wins += 1
-        print("Win percentage: {}".format(wins/count))
+        stats = []
+        for ANN_instance_name in self.scan_ANN_instances():
+            while count < 100:
+                count += 1
+                print("Game #:{}".format(count))
+                g = Game(first_ANN_instance, most_experiensed_ANN)
+                winner, _ = g.play()
+                if winner == 'white':
+                    wins += 1
+                stats.append(wins/count)
+
+        return stats
 
 
     def start_game_from_example(self):
