@@ -188,7 +188,7 @@ class Interface:
         """
         g = Game()
         g.parse_game('example.xlsx')
-        g.get_representation()
+        win_percentage = ANN_instance.getValue(g.get_representation())
 
 
 

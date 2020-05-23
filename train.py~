@@ -70,13 +70,21 @@ class Interface:
                 self.continue_machine_learning(ANN_instance, games_amount)
 
             elif choosen_option == '3':
+                os.system('cls')
                 answer = input("Enter 'y' is you made your setup in example.xlsx.\n"
                                "Overwise press 'n'.")
                 if answer == 'n':
                     continue
                 elif answer == 'y':
+                    self.display_existing_ANN_instances()
+                    instances = self.scan_ANN_instances()
+                    choosen_instance_number = int(input("Enter instance number: "))
+                    choosen_instance_name = instances[choosen_instance_number-1]
+                    with open(choosen_instance_name, 'rb') as pi:
+                        ANN_instance = pickle.load(pi)
+
+                    self.get_hint(ANN_instance)
                     
-                self.get_hint()
             elif choosen_option == '4':
                 self.watch_ANNs_play()
             elif choosen_option == '5':
@@ -174,11 +182,14 @@ class Interface:
         return [f for f in glob("data\*.pkl")]
 
 
-    def get_hint(self):
+    def get_hint(self, ANN_instance):
         """
         Get hint for one turn for given board state.
         """
-        pass
+        g = Game()
+        g.parse_game('example.xlsx')
+        g.get_representation()
+
 
 
     def compare_two_ANNs(self, first_ANN_instance, second_ANN_instance):
