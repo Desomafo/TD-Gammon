@@ -6,7 +6,6 @@ import time
 import math
 import copy
 
-from openpyxl import Workbook
 from datetime import datetime
 
 class Net(object):

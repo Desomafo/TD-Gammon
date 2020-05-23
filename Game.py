@@ -1,4 +1,5 @@
 import numpy as np
+from multiprocessing import Pool
 import random
 import copy
 
@@ -367,17 +368,29 @@ class Game:
 
             if len(actions) > 0:
                 values = []
+                repr_list = []
 
                 # Find the action with the most appealing value
                 for action in actions:
                     self.take_action(self.turn, action)
-                    representation = self.get_representation(self.board, self.players, self.on_bar, self.off_board, self.turn)
-                    if self.turn == 'white':
-                        values.append(first_opponent.getValue(representation))
-                    elif self.turn == 'black':
-                        values.append(second_opponent.getValue(representation))
+                    representation = self.get_representation(
+                            self.board, self.players, self.on_bar,
+                            self.off_board, self.turn
+                            )
+                    repr_list.append(representation)
                     # Undo the action and try the rest
                     self.undo_action(self.turn, action)
+
+                with Pool() as pool:
+                    try:
+                        if self.turn == 'white':
+                            values = pool.map(first_opponent.getValue, repr_list)
+                        elif self.turn == 'black':
+                            values = pool.map(second_opponent.getValue, repr_list)
+                    except KeyboardInterrupt:
+                        pool.terminate()
+                        print("Game is terminated")
+                        return
 
                 # We want white to win so find the max for white and the smallest for black
                 max = 0
@@ -419,7 +432,6 @@ class Game:
 
                     if self.find_winner() == 'white':
                         reward = 1
-                        wins += 1
                     for i in range(len(self.board)):
                         self.print_point(i)
 

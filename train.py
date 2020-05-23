@@ -8,7 +8,6 @@ from play import parse_game
 
 from glob import glob
 from datetime import datetime
-from openpyxl import Workbook
 
 
 class Interface:
@@ -71,6 +70,12 @@ class Interface:
                 self.continue_machine_learning(ANN_instance, games_amount)
 
             elif choosen_option == '3':
+                answer = input("Enter 'y' is you made your setup in example.xlsx.\n"
+                               "Overwise press 'n'.")
+                if answer == 'n':
+                    continue
+                elif answer == 'y':
+                    
                 self.get_hint()
             elif choosen_option == '4':
                 self.watch_ANNs_play()
@@ -118,6 +123,9 @@ class Interface:
 
     def display_existing_ANN_instances(self):
         for n, instance_file_name in enumerate(self.scan_ANN_instances(), 1):
+            instance_props = instance_file_name.split('_')
+            instance_props[0] = instance_props[0][5:]
+            instance_props[-1] = instance_props[-1][:3]
             print(f"{n}.\t{instance_props[0]} - experience")
             print(f"\t{instance_props[5][1:]}:{instance_props[6][1:]} - "
                   f"{instance_props[1]}/{instance_props[2]}/{instance_props[3]}"
@@ -186,7 +194,7 @@ class Interface:
             count += 1
             print("Game #:{}".format(count))
             g = Game()
-            winner, states = g.play(ANN_instance)
+            winner, states = g.play(first_ANN_instance, second_ANN_instance)
             if winner == 'white':
                 wins += 1
         print("Win percentage: {}".format(wins/count))
