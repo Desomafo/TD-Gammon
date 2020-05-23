@@ -203,11 +203,14 @@ class Interface:
         count = 0
         wins = 0
         stats = []
-        for ANN_instance_name in self.scan_ANN_instances():
+        ANN_files = self.scan_ANN_instances()
+        most_experiensed_ANN = pickle.load(ANN_files[-1])
+        for ANN_instance_name in ANN_files:
+            ANN_instance = pickle.load(ANN_instance_name)
             while count < 100:
                 count += 1
                 print("Game #:{}".format(count))
-                g = Game(first_ANN_instance, most_experiensed_ANN)
+                g = Game(ANN_instance, most_experiensed_ANN)
                 winner, _ = g.play()
                 if winner == 'white':
                     wins += 1
