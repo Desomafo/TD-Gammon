@@ -1,12 +1,20 @@
 import numpy as np
+from openpyxl import Workbook, load_workbook
+from ast import literal_eval
 from multiprocessing import Pool
 import random
-import copy
 
 class Game:
 
-    def __init__(self):
+    def __init__(self, first_opponent, second_opponent=None, is_learn=False):
         self.players = ['white', 'black']
+        self.first_opponent = first_opponent
+        if second_opponent == None:
+            self.second_opponent = self.first_opponent
+        else:
+            self.second_opponent = second_opponent
+        self.is_learn = is_learn
+        self.roll = ()
         self.board = [[] for _ in range(24)]
         self.on_bar = {}
         self.off_board = {}
@@ -335,11 +343,63 @@ class Game:
         self.pieces_left = new_state[3]
         self.turn = new_state[4]
 
+    
+    def find_best_action(self, actions):
+        values = []
+        repr_list = []
 
-    def play(self, first_opponent, second_opponent=None):
+        # Find the action with the most appealing value
+        for action in actions:
+            self.take_action(self.turn, action)
+            representation = self.get_representation(
+                    self.board, self.players, self.on_bar,
+                    self.off_board, self.turn
+                    )
+            repr_list.append(representation)
+            # Undo the action and try the rest
+            self.undo_action(self.turn, action)
+
+        with Pool() as pool:
+            try:
+                if self.turn == 'white':
+                    values = pool.map(self.first_opponent.getValue, repr_list)
+                elif self.turn == 'black':
+                    values = pool.map(self.second_opponent.getValue, repr_list)
+            except KeyboardInterrupt:
+                pool.terminate()
+                print("Game is terminated")
+                return
+
+        # We want white to win so find the max for white and the smallest for black
+        max_index = 0
+        min_val = 1
+        min_index = 0
+        max_val = 0
+        for i, (white_val, black_val) in enumerate(values):
+            if self.turn == 'white':
+                if max_val < white_val:
+                    max_val = white_val
+                    max_index = i
+            elif self.turn == 'black':
+                if max_val < black_val:
+                    max_val = black_val
+                    max_index = i
+        best_action = actions[max_index]
+
+        if self.is_learn == True:
+            for i in range(0, len(values)):
+                if self.turn == 'black':
+                    if min_val > values[i][1]:
+                        min_val = values[i][1]
+                        min_index = i
+            best_action = actions[min_index]
+
+        return best_action
+
+
+
+    def play(self):
         
-        if second_opponent == None:
-            second_opponent = first_opponent
         # print("White player rolled {}, Black player rolled {}".format(p1Roll[0] + p1Roll[1], p2Roll[0] + p2Roll[1]))
         p1Roll = (0,0)
         p2Roll = (0,0)
@@ -367,50 +427,8 @@ class Game:
                 actions = self.find_moves(self.roll_dice(), self.turn)
 
             if len(actions) > 0:
-                values = []
-                repr_list = []
 
-                # Find the action with the most appealing value
-                for action in actions:
-                    self.take_action(self.turn, action)
-                    representation = self.get_representation(
-                            self.board, self.players, self.on_bar,
-                            self.off_board, self.turn
-                            )
-                    repr_list.append(representation)
-                    # Undo the action and try the rest
-                    self.undo_action(self.turn, action)
-
-                with Pool() as pool:
-                    try:
-                        if self.turn == 'white':
-                            values = pool.map(first_opponent.getValue, repr_list)
-                        elif self.turn == 'black':
-                            values = pool.map(second_opponent.getValue, repr_list)
-                    except KeyboardInterrupt:
-                        pool.terminate()
-                        print("Game is terminated")
-                        return
-
-                # We want white to win so find the max for white and the smallest for black
-                max = 0
-                max_index = 0
-                min = 1
-                min_index = 0
-                for i in range(0, len(values)):
-                    if self.turn == 'white':
-                        if max < values[i][0]:
-                            max = values[i][0]
-                            max_index = i
-                    elif self.turn == 'black':
-                        if min > values[i][1]:
-                            min = values[i][1]
-                            min_index = i
-                if self.turn == 'white':
-                    best_action = actions[max_index]
-                else:
-                    best_action = actions[min_index]
-
+                best_action = self.find_best_action(actions)
                 # Take the best action
                 self.take_action(self.turn, best_action)
 
@@ -436,3 +454,102 @@ class Game:
                         self.print_point(i)
 
         return self.find_winner(), states
+
+
+    def parse_game(self, xlsx_name):
+        game_wb = load_workbook(xlsx_name)
+        game_ws = game_wb.active
+
+        board = [[] for _ in range(24)]
+
+        indexes_up = {
+            2: 23,
+            3: 22,
+            4: 21,
+            5: 20,
+            6: 19,
+            7: 18,
+            10: 17,
+            11: 16,
+            12: 15,
+            13: 14,
+            14: 13,
+            15: 12
+        }
+
+        indexes_down = {
+            2: 0,
+            3: 1,
+            4: 2,
+            5: 3,
+            6: 4,
+            7: 5,
+            10: 6,
+            11: 7,
+            12: 8,
+            13: 9,
+            14: 10,
+            15: 11
+        }
+
+        on_bar = {
+            'white': [],
+            'black': []
+        }
+
+        game_state = []
+
+        hit_none = False
+        for i in range(1, 17):
+            for j in range(2, 20):
+                if i in (1, 8, 9, 16):
+                    cell_val = game_ws.cell(row=j, column=i).value
+                    if cell_val == 1:
+                        on_bar['white'].append('white')
+                    if cell_val == 0:
+                        on_bar['black'].append('black')
+                else:
+                    cell_val = game_ws.cell(row=j, column=i).value
+                    if cell_val == None:
+                        hit_none = True
+                    if cell_val == 1:
+                        if not hit_none:
+                            board[indexes_up[i]].append('white')
+                        else:
+                            board[indexes_down[i]].append('white')
+                    if cell_val == 0:
+                        if not hit_none:
+                            board[indexes_up[i]].append('black')
+                        else:
+                            board[indexes_down[i]].append('black')
+            hit_none = False
+
+        white_count = 0
+        black_count = 0
+        for cell in board:
+            for checker in cell:
+                if checker == 'white':
+                    white_count += 1
+                else:
+                    black_count += 1
+
+        off_board = {
+            'white': ['white' for i in range(15 - white_count)],
+            'black': ['black' for i in range(15 - black_count)]
+        }
+
+        pieces_left = {
+            'white': white_count,
+            'black': black_count
+        }
+
+
+        turn = 'white' if int(game_ws['H23'].value) == 1 else 'black' 
+        self.roll = literal_eval(game_ws['I23'].value)
+        
+
+        self.board = board
+        self.on_bar = on_bar
+        self.off_board = off_board
+        self.pieces_left = pieces_left
+        self.turn = turn

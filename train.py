@@ -72,11 +72,17 @@ class Interface:
                 self.continue_machine_learning(ANN_instance, games_amount)
 
             elif choosen_option == '3':
+<<<<<<< HEAD
                 answer = input("Enter 'y' if you made your setup in example.xlsx.\n"
+=======
+                os.system('cls')
+                answer = input("Enter 'y' is you made your setup in example.xlsx.\n"
+>>>>>>> refs/remotes/origin/master
                                "Overwise press 'n'.")
                 if answer == 'n':
                     continue
                 elif answer == 'y':
+<<<<<<< HEAD
                     print("Choose ANN instance from what you a hint: ")
                     self.display_existing_ANN_instances()
 
@@ -89,6 +95,17 @@ class Interface:
 
                     self.get_hint(ANN_instance)
 
+=======
+                    self.display_existing_ANN_instances()
+                    instances = self.scan_ANN_instances()
+                    choosen_instance_number = int(input("Enter instance number: "))
+                    choosen_instance_name = instances[choosen_instance_number-1]
+                    with open(choosen_instance_name, 'rb') as pi:
+                        ANN_instance = pickle.load(pi)
+
+                    print("Next move - {}".format(self.get_hint(ANN_instance)))
+                    
+>>>>>>> refs/remotes/origin/master
             elif choosen_option == '4':
                 os.system('cls')
                 self.display_existing_ANN_instances() 
@@ -163,8 +180,8 @@ class Interface:
             while count < games_amount:
                 count += 1
                 print("Game #:{}".format(count))
-                g = Game()
-                winner, states = g.play(ANN_instance)
+                g = Game(ANN_instance, None, True)
+                winner, states = g.play()
                 if winner == 'white':
                     wins += 1
                 # Build the eligibility trace with the list of states white has accumulated
@@ -182,14 +199,18 @@ class Interface:
         return [f for f in glob("data\*.pkl")]
 
 
-    def get_hint(self):
+    def get_hint(self, ANN_instance):
         """
         Get hint for one turn for given board state.
         """
-        pass
+        g = Game(ANN_instance)
+        g.parse_game('example.xlsx')
+        best_action = g.find_best_action(g.find_moves(g.turn, g.roll()))
+        return best_action
 
 
-    def compare_two_ANNs(self, first_ANN_instance, second_ANN_instance):
+
+    def compare_ANNs_with_most_experienced(self):
         """
         Two given instances of ANN will play against each other for
         entered amount of games. Result is win percentage for first
@@ -198,14 +219,21 @@ class Interface:
 
         count = 0
         wins = 0
-        while count < 100:
-            count += 1
-            print("Game #:{}".format(count))
-            g = Game()
-            winner, states = g.play(first_ANN_instance, second_ANN_instance)
-            if winner == 'white':
-                wins += 1
-        print("Win percentage: {}".format(wins/count))
+        stats = []
+        ANN_files = self.scan_ANN_instances()
+        most_experiensed_ANN = pickle.load(ANN_files[-1])
+        for ANN_instance_name in ANN_files:
+            ANN_instance = pickle.load(ANN_instance_name)
+            while count < 100:
+                count += 1
+                print("Game #:{}".format(count))
+                g = Game(ANN_instance, most_experiensed_ANN)
+                winner, _ = g.play()
+                if winner == 'white':
+                    wins += 1
+                stats.append(wins/count)
+
+        return stats
 
 
     def start_game_from_example(self):
