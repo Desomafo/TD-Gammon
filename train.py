@@ -72,12 +72,22 @@ class Interface:
                 self.continue_machine_learning(ANN_instance, games_amount)
 
             elif choosen_option == '3':
-                answer = input("Enter 'y' is you made your setup in example.xlsx.\n"
+                answer = input("Enter 'y' if you made your setup in example.xlsx.\n"
                                "Overwise press 'n'.")
                 if answer == 'n':
                     continue
                 elif answer == 'y':
-                    self.get_hint()
+                    print("Choose ANN instance from what you a hint: ")
+                    self.display_existing_ANN_instances()
+
+                    instances = self.scan_ANN_instances()
+                    choosen_instance_number = int(input("Enter instance number: "))
+                    choosen_instance_name = instances[choosen_instance_number-1]
+
+                    with open(choosen_instance_name, 'rb') as pi:
+                        ANN_instance = pickle.load(pi)
+
+                    self.get_hint(ANN_instance)
 
             elif choosen_option == '4':
                 os.system('cls')
