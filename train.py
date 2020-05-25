@@ -27,23 +27,25 @@ class Interface:
                 "Make a new instance of ANN",
                 "Continue process of machine learning",
                 "Get hint for one turn",
-                "Watch ANN play",
                 "Compare two ANNs",
                 "Start game from example",
-                "Play game with ANN",
                 ]
-        self.ANN_instances = self.scan_ANN_instances()
-        if len(self.ANN_instances) > 1:
-            self.more_than_one_network_instance = True
-        else:
-            self.more_than_one_network_instance = False
 
 
         # Main control cycle of programm
         while True:
+            
+            self.ANN_instances = self.scan_ANN_instances()
+            if len(self.ANN_instances) > 1:
+                self.more_than_one_network_instance = True
+            else:
+                self.more_than_one_network_instance = False
+                
+            os.system('cls')
             self.display_menu()
             choosen_option = input("\nEnter option number: ")
             print()
+
             if choosen_option == 'x':
                 break
 
@@ -75,11 +77,9 @@ class Interface:
                 if answer == 'n':
                     continue
                 elif answer == 'y':
-                    
-                self.get_hint()
+                    self.get_hint()
+
             elif choosen_option == '4':
-                self.watch_ANNs_play()
-            elif choosen_option == '5':
                 os.system('cls')
                 self.display_existing_ANN_instances() 
 
@@ -97,10 +97,8 @@ class Interface:
 
                 self.compare_two_ANNs(first_instance, second_instance)
 
-            elif choosen_option == '6':
+            elif choosen_option == '5':
                 self.start_game_from_example()
-            elif choosen_option == '7':
-                self.play_with_ANN()
 
 
     def display_menu(self):
