@@ -28,6 +28,7 @@ class Interface:
                 "Continue process of machine learning",
                 "Get hint for one turn",
                 "Compare two ANNs",
+                "Compare all ANNs to most experienced"
                 "Start game from example",
                 ]
 
@@ -72,30 +73,12 @@ class Interface:
                 self.continue_machine_learning(ANN_instance, games_amount)
 
             elif choosen_option == '3':
-<<<<<<< HEAD
-                answer = input("Enter 'y' if you made your setup in example.xlsx.\n"
-=======
                 os.system('cls')
                 answer = input("Enter 'y' is you made your setup in example.xlsx.\n"
->>>>>>> refs/remotes/origin/master
                                "Overwise press 'n'.")
                 if answer == 'n':
                     continue
                 elif answer == 'y':
-<<<<<<< HEAD
-                    print("Choose ANN instance from what you a hint: ")
-                    self.display_existing_ANN_instances()
-
-                    instances = self.scan_ANN_instances()
-                    choosen_instance_number = int(input("Enter instance number: "))
-                    choosen_instance_name = instances[choosen_instance_number-1]
-
-                    with open(choosen_instance_name, 'rb') as pi:
-                        ANN_instance = pickle.load(pi)
-
-                    self.get_hint(ANN_instance)
-
-=======
                     self.display_existing_ANN_instances()
                     instances = self.scan_ANN_instances()
                     choosen_instance_number = int(input("Enter instance number: "))
@@ -104,8 +87,8 @@ class Interface:
                         ANN_instance = pickle.load(pi)
 
                     print("Next move - {}".format(self.get_hint(ANN_instance)))
+                    input("Press any key to continue")
                     
->>>>>>> refs/remotes/origin/master
             elif choosen_option == '4':
                 os.system('cls')
                 self.display_existing_ANN_instances() 
@@ -114,8 +97,8 @@ class Interface:
                 numbers_str = input("Enter two numbers of instances"
                                     "to compare (* *): ")
                 numbers = numbers_str.split(' ')
-                first_instance_name = instances[int(numbers[0])]
-                second_instance_name = instances[int(numbers[1])]
+                first_instance_name = instances[int(numbers[0])-1]
+                second_instance_name = instances[int(numbers[1])-1]
                 
                 with open(first_instance_name, 'rb') as pi:
                     first_instance = pickle.load(pi)
@@ -205,7 +188,8 @@ class Interface:
         """
         g = Game(ANN_instance)
         g.parse_game('example.xlsx')
-        best_action = g.find_best_action(g.find_moves(g.turn, g.roll()))
+        best_action = g.find_best_action(g.find_moves(g.roll, g.turn))
+        best_action = (best_action[0]+1, best_action[1]+1)
         return best_action
 
 
