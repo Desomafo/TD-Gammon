@@ -193,12 +193,18 @@ class Interface:
         return best_action
 
 
-
-    def compare_ANNs_with_most_experienced(self):
+    def compare_two_ANNs(self, games_amount):
         """
         Two given instances of ANN will play against each other for
         entered amount of games. Result is win percentage for first
         choosen network.
+        """
+
+
+    def compare_ANNs_with_most_experienced(self):
+        """
+        Old McDonald had a farm....
+        
         """
 
         count = 0
