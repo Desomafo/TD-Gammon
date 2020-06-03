@@ -108,15 +108,21 @@ class Interface:
                 games_amount = input("Enter amount of games to compare (games amount): ")
                 games_amount = int(games_amount)
 
-                self.compare_two_ANNs(first_instance, second_instance, games_amount)
+                stats = self.compare_two_ANNs(first_instance, second_instance,
+                                              games_amount)
+                print(stats)
 
             elif choosen_option == '5':
                 games_amount = input("Enter amount of games to compare (games amount): ")
                 games_amount = int(games_amount)
-                self.compare_ANNs_with_most_experienced(games_amount)
+                stats = self.compare_ANNs_with_most_experienced(games_amount)
+                print(stats)
 
             elif choosen_option == '6':
                 self.start_game_from_example()
+
+            elif choosen_option == '7':
+                self.search_for_xlsx_instances()
 
 
     def display_menu(self):
@@ -201,12 +207,26 @@ class Interface:
         return best_action
 
 
-    def compare_two_ANNs(self, games_amount):
+    def compare_two_ANNs(self, first_instance, second_instance, games_amount):
         """
         Two given instances of ANN will play against each other for
         entered amount of games. Result is win percentage for first
         choosen network.
         """
+
+        count = 0
+        wins = 0
+        stats = []
+        while count < games_amount:
+            count += 1
+            print("Game #:{}".format(count))
+            g = Game(first_instance, second_instance)
+            winner, _ = g.play()
+            if winner == 'white':
+                wins += 1
+            stats.append(wins/count)
+
+        return stats
 
 
     def compare_ANNs_with_most_experienced(self, games_amount):
@@ -235,19 +255,23 @@ class Interface:
         return stats
 
 
-    def start_game_from_example(self):
+    def search_for_xlsx_instances(self, dirrectory):
         """
-        Start playing game from given board state. Than pass control
-        to third or seventh options.
+        Search and parse all instances from xlsx files that were
+        created in November last year.
         """
-        pass
+        xlsx_file_names = glob(dirrectory + '/*.xlsx')
+        for file_name in xlsx_file_names:
+            new_instance = Net()
+            new_instance.parse_weights_form_xlsx(file_name)
+            new_instance.save()
+        
+        print("Search and creation are finished")
+        input("Press any key to continue")
+        return len(xlsx_file_names)
 
-    
-    def play_with_ANN(self):
-        """
-        Start playing against choosen ANN. GIU option only.
-        """
-        pass
+
+
 
 
 if __name__ == '__main__':

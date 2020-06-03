@@ -7,6 +7,7 @@ import math
 import copy
 
 from datetime import datetime
+from openpyxl import load_workbook
 
 class Net(object):
 
@@ -186,3 +187,8 @@ class Net(object):
     def load_weights(self, weights):
         self.input_weights = weights[0]
         self.hidden_weights = weights[1]
+
+    def parse_weights_from_xlsx(self, xlsx_file_name):
+        instance_wb = load_workbook(xlsx_file_name)
+        weights_ws = instance_wb.active
+        
