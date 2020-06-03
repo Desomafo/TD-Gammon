@@ -105,9 +105,17 @@ class Interface:
                 with open(second_instance_name, 'rb') as pi:
                     second_instance = pickle.load(pi)
 
-                self.compare_two_ANNs(first_instance, second_instance)
+                games_amount = input("Enter amount of games to compare (games amount): ")
+                games_amount = int(games_amount)
+
+                self.compare_two_ANNs(first_instance, second_instance, games_amount)
 
             elif choosen_option == '5':
+                games_amount = input("Enter amount of games to compare (games amount): ")
+                games_amount = int(games_amount)
+                self.compare_ANNs_with_most_experienced(games_amount)
+
+            elif choosen_option == '6':
                 self.start_game_from_example()
 
 
