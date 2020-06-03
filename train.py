@@ -28,7 +28,7 @@ class Interface:
                 "Continue process of machine learning",
                 "Get hint for one turn",
                 "Compare two ANNs",
-                "Compare all ANNs to most experienced"
+                "Compare all ANNs to most experienced",
                 "Start game from example",
                 ]
 
@@ -209,27 +209,28 @@ class Interface:
         """
 
 
-    def compare_ANNs_with_most_experienced(self):
+    def compare_ANNs_with_most_experienced(self, games_amount):
         """
-        Old McDonald had a farm....
-        
+        Compare all ANN instances to most experienced of them.
         """
 
         count = 0
         wins = 0
         stats = []
         ANN_files = self.scan_ANN_instances()
-        most_experiensed_ANN = pickle.load(ANN_files[-1])
-        for ANN_instance_name in ANN_files:
-            ANN_instance = pickle.load(ANN_instance_name)
-            while count < 100:
-                count += 1
-                print("Game #:{}".format(count))
-                g = Game(ANN_instance, most_experiensed_ANN)
-                winner, _ = g.play()
-                if winner == 'white':
-                    wins += 1
-                stats.append(wins/count)
+        with open(ANN_files[-1], 'rb') as most_experienced_file:
+            most_experiensed_ANN = pickle.load(most_experienced_file)
+            for ANN_instance_name in ANN_files:
+                with open(ANN_instance_name, 'rb') as pi:
+                    ANN_instance = pickle.load(pi)
+                    while count < games_amount:
+                        count += 1
+                        print("Game #:{}".format(count))
+                        g = Game(ANN_instance, most_experiensed_ANN)
+                        winner, _ = g.play()
+                        if winner == 'white':
+                            wins += 1
+                        stats.append(wins/count)
 
         return stats
 
