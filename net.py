@@ -192,3 +192,16 @@ class Net(object):
         instance_wb = load_workbook(xlsx_file_name)
         weights_ws = instance_wb.active
         
+        input_range = weights_ws['A1':'AN198']
+        hidden_range = weights_ws['A200':'B239']
+
+        for row_num, row in enumerate(input_range):
+            for cell_num, cell in enumerate(row):
+                self.input_weights[row_num][cell_num] = cell.value
+
+        for row_num, row in enumerate(hidden_range):
+            for cell_num, cell in enumerate(row):
+                self.hidden_weights[row_num][cell_num] = cell.value
+        name_splits = xlsx_file_name.split(' ', 1)
+        self.games_amount_experience = name_splits[0][21:]
+        self.init_date = datetime.strptime(name_splits[1], '_ %d, %b %Y, %H_%M.xlsx')

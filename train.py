@@ -29,7 +29,7 @@ class Interface:
                 "Get hint for one turn",
                 "Compare two ANNs",
                 "Compare all ANNs to most experienced",
-                "Start game from example",
+                "Search for old examples",
                 ]
 
 
@@ -119,10 +119,7 @@ class Interface:
                 print(stats)
 
             elif choosen_option == '6':
-                self.start_game_from_example()
-
-            elif choosen_option == '7':
-                self.search_for_xlsx_instances()
+                self.search_for_xlsx_instances('data//November')
 
 
     def display_menu(self):
@@ -260,10 +257,10 @@ class Interface:
         Search and parse all instances from xlsx files that were
         created in November last year.
         """
-        xlsx_file_names = glob(dirrectory + '/*.xlsx')
+        xlsx_file_names = glob(dirrectory + '//*.xlsx')
         for file_name in xlsx_file_names:
             new_instance = Net()
-            new_instance.parse_weights_form_xlsx(file_name)
+            new_instance.parse_weights_from_xlsx(file_name)
             new_instance.save()
         
         print("Search and creation are finished")
