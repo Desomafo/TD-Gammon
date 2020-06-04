@@ -8,6 +8,7 @@ from play import parse_game
 
 from glob import glob
 from datetime import datetime
+from matplotlib import pyplot
 
 
 class Interface:
@@ -87,14 +88,13 @@ class Interface:
                         ANN_instance = pickle.load(pi)
 
                     print("Next move - {}".format(self.get_hint(ANN_instance)))
-                    input("Press any key to continue")
                     
             elif choosen_option == '4':
                 os.system('cls')
                 self.display_existing_ANN_instances() 
 
                 instances = self.scan_ANN_instances()
-                numbers_str = input("Enter two numbers of instances"
+                numbers_str = input("Enter two numbers of instances "
                                     "to compare (* *): ")
                 numbers = numbers_str.split(' ')
                 first_instance_name = instances[int(numbers[0])-1]
@@ -116,10 +116,16 @@ class Interface:
                 games_amount = input("Enter amount of games to compare (games amount): ")
                 games_amount = int(games_amount)
                 stats = self.compare_ANNs_with_most_experienced(games_amount)
+
+                pyplot.plot(stats[0], stats[1])
+                pyplot.show()
+                
                 print(stats)
 
             elif choosen_option == '6':
                 self.search_for_xlsx_instances('data//November')
+
+            input("Press any key to continue...")
 
 
     def display_menu(self):
@@ -247,7 +253,7 @@ class Interface:
                         winner, _ = g.play()
                         if winner == 'white':
                             wins += 1
-                        stats.append(wins/count)
+                        stats.append([ANN_instance.games_amount_experience, wins/count])
 
         return stats
 
@@ -264,7 +270,6 @@ class Interface:
             new_instance.save()
         
         print("Search and creation are finished")
-        input("Press any key to continue")
         return len(xlsx_file_names)
 
 

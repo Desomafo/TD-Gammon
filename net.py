@@ -205,3 +205,10 @@ class Net(object):
         name_splits = xlsx_file_name.split(' ', 1)
         self.games_amount_experience = name_splits[0][21:]
         self.init_date = datetime.strptime(name_splits[1], '_ %d, %b %Y, %H_%M.xlsx')
+
+
+    def cut_input_weights(self):
+        pass
+
+    def cut_hidden_weights(self):
+        pass

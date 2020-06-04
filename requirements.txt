@@ -1,0 +1,4 @@
+matplotlib==3.2.1
+numpy==1.13.3
+openpyxl==3.0.3
+pylint==2.3.1
