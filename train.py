@@ -115,9 +115,9 @@ class Interface:
             elif choosen_option == '5':
                 games_amount = input("Enter amount of games to compare (games amount): ")
                 games_amount = int(games_amount)
-                stats = self.compare_ANNs_with_most_experienced(games_amount)
+                experiences, win_percentages = self.compare_ANNs_with_most_experienced(games_amount)
 
-                pyplot.plot(stats[0], stats[1])
+                pyplot.plot(experiences, win_percentages)
                 pyplot.show()
                 
                 print(stats)
@@ -227,7 +227,7 @@ class Interface:
             winner, _ = g.play()
             if winner == 'white':
                 wins += 1
-            stats.append(wins/count)
+        stats.append(wins/count)
 
         return stats
 
@@ -237,25 +237,29 @@ class Interface:
         Compare all ANN instances to most experienced of them.
         """
 
-        count = 0
-        wins = 0
-        stats = []
+        experiences = []
+        win_percentages = []
         ANN_files = self.scan_ANN_instances()
         with open(ANN_files[-1], 'rb') as most_experienced_file:
             most_experiensed_ANN = pickle.load(most_experienced_file)
             for ANN_instance_name in ANN_files:
+                count = 0
+                wins = 0
+                print(ANN_instance_name)
                 with open(ANN_instance_name, 'rb') as pi:
                     ANN_instance = pickle.load(pi)
                     while count < games_amount:
                         count += 1
                         print("Game #:{}".format(count))
+                        print(datetime.now())
                         g = Game(ANN_instance, most_experiensed_ANN)
                         winner, _ = g.play()
                         if winner == 'white':
                             wins += 1
-                        stats.append([ANN_instance.games_amount_experience, wins/count])
+                    experiences.append(int(ANN_instance.games_amount_experience))
+                    win_percentages.append(wins/count)
 
-        return stats
+        return experiences, win_percentages
 
 
     def search_for_xlsx_instances(self, dirrectory):
